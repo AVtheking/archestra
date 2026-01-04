@@ -1,7 +1,7 @@
 "use client";
 
 import type { UIMessage } from "@ai-sdk/react";
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -392,6 +392,7 @@ export default function ChatPage() {
   const profileName = conversationPrompt?.agentId
     ? allProfiles.find((a) => a.id === conversationPrompt.agentId)?.name
     : null;
+    
   const promptBadge = (
     <>
       {conversationPrompt ? (
@@ -399,15 +400,26 @@ export default function ChatPage() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="inline-flex items-center px-2 py-1 rounded-md bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs font-medium cursor-help">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingPromptId(conversationPrompt.id);
+                    setIsPromptDialogOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs font-medium cursor-pointer hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors"
+                >
+                  <Pencil className="h-3 w-3" />
                   Prompt: {conversationPrompt.name}
-                </span>
+                </button>
               </TooltipTrigger>
               <TooltipContent
                 side="top"
                 className="max-w-md max-h-64 overflow-y-auto"
               >
                 <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground italic">
+                    Click to edit
+                  </div>
                   {profileName && (
                     <div>
                       <div className="font-semibold text-xs mb-1">Profile:</div>
@@ -430,6 +442,31 @@ export default function ChatPage() {
           </TooltipProvider>
         </div>
       ) : null}
+    </>
+  );
+
+  const promptDialogs = (
+    <>
+      <PromptDialog
+        open={isPromptDialogOpen}
+        onOpenChange={(open) => {
+          setIsPromptDialogOpen(open);
+          if (!open) {
+            setEditingPromptId(null);
+          }
+        }}
+        prompt={editingPrompt}
+        onViewVersionHistory={setVersionHistoryPrompt}
+      />
+      <PromptVersionHistoryDialog
+        open={!!versionHistoryPrompt}
+        onOpenChange={(open) => {
+          if (!open) {
+            setVersionHistoryPrompt(null);
+          }
+        }}
+        prompt={versionHistoryPrompt}
+      />
     </>
   );
 
@@ -476,26 +513,7 @@ export default function ChatPage() {
           onDelete={handleDeletePrompt}
           onViewVersionHistory={setVersionHistoryPrompt}
         />
-        <PromptDialog
-          open={isPromptDialogOpen}
-          onOpenChange={(open) => {
-            setIsPromptDialogOpen(open);
-            if (!open) {
-              setEditingPromptId(null);
-            }
-          }}
-          prompt={editingPrompt}
-          onViewVersionHistory={setVersionHistoryPrompt}
-        />
-        <PromptVersionHistoryDialog
-          open={!!versionHistoryPrompt}
-          onOpenChange={(open) => {
-            if (!open) {
-              setVersionHistoryPrompt(null);
-            }
-          }}
-          prompt={versionHistoryPrompt}
-        />
+        {promptDialogs}
       </PageLayout>
     );
   }
@@ -595,6 +613,7 @@ export default function ChatPage() {
         onClose={() => closeDialog("create-catalog")}
         onSuccess={() => router.push("/mcp-catalog/registry")}
       />
+      {promptDialogs}
     </div>
   );
 }
