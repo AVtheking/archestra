@@ -98,9 +98,15 @@ export function McpConnectionInstructions({
     return counts;
   }, [selectedProfile, mcpServers]);
 
-  const totalToolCount = useMemo(()=>{
-     return Array.from(mcpServerToolCounts.values()).reduce((acc, curr) => acc + curr.toolCount, 0)
-  }, [mcpServerToolCounts]);
+
+  const getToolsCountForProfile = useCallback((profile: typeof profiles[number]) => {
+     return profile.tools.reduce((acc, curr) => {
+      if(curr.mcpServerId) {
+        acc++;
+      }
+      return acc;
+     }, 0);
+  }, []);
 
   // Use the new URL format with selected profile ID
   const mcpUrl = `${apiBaseUrl}/mcp/${selectedProfileId}`;
@@ -300,7 +306,7 @@ export function McpConnectionInstructions({
                   <User className="h-4 w-4" />
                   <span>{selectedProfile.name}</span>
                   <span className="text-muted-foreground ml-auto">
-                    {totalToolCount} tools
+                    {getToolsCountForProfile(selectedProfile)} tools
                   </span>
                 </div>
               )}
@@ -315,7 +321,7 @@ export function McpConnectionInstructions({
                     <span>{profile.name}</span>
                   </div>
                   <span className="text-sm text-muted-foreground ml-4">
-                    {totalToolCount} tools
+                    {getToolsCountForProfile(profile)} tools
                   </span>
                 </div>
               </SelectItem>
