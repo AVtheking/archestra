@@ -98,15 +98,17 @@ export function McpConnectionInstructions({
     return counts;
   }, [selectedProfile, mcpServers]);
 
-
-  const getToolsCountForProfile = useCallback((profile: typeof profiles[number]) => {
-     return profile.tools.reduce((acc, curr) => {
-      if(curr.mcpServerId) {
-        acc++;
-      }
-      return acc;
-     }, 0);
-  }, []);
+  const getToolsCountForProfile = useCallback(
+    (profile: (typeof profiles)[number]) => {
+      return profile.tools.reduce((acc, curr) => {
+        if (curr.mcpServerId) {
+          acc++;
+        }
+        return acc;
+      }, 0);
+    },
+    [],
+  );
 
   // Use the new URL format with selected profile ID
   const mcpUrl = `${apiBaseUrl}/mcp/${selectedProfileId}`;
