@@ -102,12 +102,15 @@ export function McpConnectionInstructions({
     (profile: (typeof profiles)[number]) => {
       return profile.tools.reduce((acc, curr) => {
         if (curr.mcpServerId) {
-          acc++;
+          const server = mcpServers?.find((s) => s.id === curr.mcpServerId);
+          if (server) {
+            acc++;
+          }
         }
         return acc;
       }, 0);
     },
-    [],
+    [mcpServers]
   );
 
   // Use the new URL format with selected profile ID
