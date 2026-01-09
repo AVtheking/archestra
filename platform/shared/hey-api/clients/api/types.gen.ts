@@ -1449,6 +1449,120 @@ export type WebSocketMessageInput = {
     };
 };
 
+export type PerplexityChatCompletionRequestInput = {
+    model: 'sonar' | 'sonar-pro' | 'sonar-deep-research' | 'sonar-reasoning-pro';
+    messages: Array<{
+        content: string;
+        role: 'system' | 'user' | 'assistant';
+    }>;
+    max_tokens?: number;
+    temperature?: number;
+    top_p?: number;
+    top_k?: number;
+    stream?: boolean;
+    presence_penalty?: number;
+    frequency_penalty?: number;
+    response_format?: {
+        type: string;
+    } | {
+        type: string;
+        json_schema: {
+            schema: {
+                [key: string]: unknown;
+            };
+            description?: string | unknown;
+            name?: string | unknown;
+            strict?: boolean | unknown;
+        };
+    } | {
+        type: string;
+        regex: {
+            regex: string;
+            description?: string | unknown;
+            name?: string | unknown;
+            strict?: boolean | unknown;
+        };
+    } | unknown;
+    search_mode?: 'academic' | 'sec' | 'web';
+    reasoning_effort?: 'low' | 'medium' | 'high';
+    language_preference?: string;
+    search_domain_filter?: Array<string>;
+    return_images?: boolean;
+    return_related_questions?: boolean;
+    search_recency_filter?: 'hour' | 'day' | 'week' | 'month' | 'year';
+    search_after_date_filter?: string;
+    search_before_date_filter?: string;
+    last_updated_after_filter?: string;
+    last_updated_before_filter?: string;
+    disable_search?: boolean;
+    enable_search_classifier?: boolean;
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#body-web-search-options
+     */
+    web_search_options?: {
+        search_context_size?: 'low' | 'medium' | 'high';
+        user_location?: {
+            latitude?: number;
+            longitude?: number;
+            country?: string;
+            city?: string;
+            region?: string;
+        };
+        image_search_relevance_enhancement?: boolean;
+    };
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#body-media-response
+     */
+    media_response?: {
+        overrides?: {
+            return_videos?: boolean;
+            return_images?: boolean;
+        };
+    };
+};
+
+export type PerplexityChatCompletionResponseInput = {
+    id: string;
+    choices: Array<{
+        finish_reason: 'stop' | 'length' | unknown;
+        index: number;
+        /**
+         * https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message
+         */
+        message: {
+            content: string;
+            role: 'assistant';
+        };
+    }>;
+    search_results?: Array<{
+        title: string;
+        url: string;
+        date: string | unknown;
+    }> | unknown;
+    videos?: Array<{
+        url: string;
+        thumbnail_url: string | unknown;
+        thumbnail_width: number | unknown;
+        thumbnail_height: number | unknown;
+        duration: number | unknown;
+    }> | unknown;
+    created: number;
+    model: string;
+    object: 'chat.completion';
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage
+     */
+    usage: {
+        completion_tokens: number;
+        prompt_tokens: number;
+        total_tokens: number;
+        search_context_size: string | unknown;
+        citation_tokens: number | unknown;
+        reasoning_tokens: number | unknown;
+        num_search_queries: number | unknown;
+    };
+};
+
 export type OpenAiChatCompletionRequest = {
     model: string;
     /**
@@ -2891,6 +3005,120 @@ export type WebSocketMessage = {
     payload: {
         conversationId: string;
         zoomPercent: number;
+    };
+};
+
+export type PerplexityChatCompletionRequest = {
+    model: 'sonar' | 'sonar-pro' | 'sonar-deep-research' | 'sonar-reasoning-pro';
+    messages: Array<{
+        content: string;
+        role: 'system' | 'user' | 'assistant';
+    }>;
+    max_tokens?: number;
+    temperature?: number;
+    top_p?: number;
+    top_k?: number;
+    stream?: boolean;
+    presence_penalty?: number;
+    frequency_penalty?: number;
+    response_format?: {
+        type: string;
+    } | {
+        type: string;
+        json_schema: {
+            schema: {
+                [key: string]: unknown;
+            };
+            description?: string | unknown;
+            name?: string | unknown;
+            strict?: boolean | unknown;
+        };
+    } | {
+        type: string;
+        regex: {
+            regex: string;
+            description?: string | unknown;
+            name?: string | unknown;
+            strict?: boolean | unknown;
+        };
+    } | unknown;
+    search_mode?: 'academic' | 'sec' | 'web';
+    reasoning_effort?: 'low' | 'medium' | 'high';
+    language_preference?: string;
+    search_domain_filter?: Array<string>;
+    return_images?: boolean;
+    return_related_questions?: boolean;
+    search_recency_filter?: 'hour' | 'day' | 'week' | 'month' | 'year';
+    search_after_date_filter?: string;
+    search_before_date_filter?: string;
+    last_updated_after_filter?: string;
+    last_updated_before_filter?: string;
+    disable_search?: boolean;
+    enable_search_classifier?: boolean;
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#body-web-search-options
+     */
+    web_search_options?: {
+        search_context_size?: 'low' | 'medium' | 'high';
+        user_location?: {
+            latitude?: number;
+            longitude?: number;
+            country?: string;
+            city?: string;
+            region?: string;
+        };
+        image_search_relevance_enhancement?: boolean;
+    };
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#body-media-response
+     */
+    media_response?: {
+        overrides?: {
+            return_videos?: boolean;
+            return_images?: boolean;
+        };
+    };
+};
+
+export type PerplexityChatCompletionResponse = {
+    id: string;
+    choices: Array<{
+        finish_reason: 'stop' | 'length' | unknown;
+        index: number;
+        /**
+         * https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message
+         */
+        message: {
+            content: string;
+            role: 'assistant';
+        };
+    }>;
+    search_results?: Array<{
+        title: string;
+        url: string;
+        date: string | unknown;
+    }> | unknown;
+    videos?: Array<{
+        url: string;
+        thumbnail_url: string | unknown;
+        thumbnail_width: number | unknown;
+        thumbnail_height: number | unknown;
+        duration: number | unknown;
+    }> | unknown;
+    created: number;
+    model: string;
+    object: 'chat.completion';
+    /**
+     * https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage
+     */
+    usage: {
+        completion_tokens: number;
+        prompt_tokens: number;
+        total_tokens: number;
+        search_context_size: string | unknown;
+        citation_tokens: number | unknown;
+        reasoning_tokens: number | unknown;
+        num_search_queries: number | unknown;
     };
 };
 
@@ -8988,6 +9216,24 @@ export type GetInteractionsResponses = {
             toonTokensAfter: number | null;
             toonCostSavings: string | null;
             createdAt: string;
+        } | {
+            id: string;
+            profileId: string;
+            externalAgentId: string | null;
+            userId: string | null;
+            request: PerplexityChatCompletionRequest;
+            processedRequest?: PerplexityChatCompletionRequest | null;
+            response: PerplexityChatCompletionResponse;
+            type: 'perplexity:chatCompletions';
+            model: string | null;
+            inputTokens: number | null;
+            outputTokens: number | null;
+            baselineCost: string | null;
+            cost: string | null;
+            toonTokensBefore: number | null;
+            toonTokensAfter: number | null;
+            toonCostSavings: string | null;
+            createdAt: string;
         }>;
         pagination: {
             currentPage: number;
@@ -9272,6 +9518,24 @@ export type GetInteractionResponses = {
         processedRequest?: AnthropicMessagesRequest | null;
         response: AnthropicMessagesResponse;
         type: 'anthropic:messages';
+        model: string | null;
+        inputTokens: number | null;
+        outputTokens: number | null;
+        baselineCost: string | null;
+        cost: string | null;
+        toonTokensBefore: number | null;
+        toonTokensAfter: number | null;
+        toonCostSavings: string | null;
+        createdAt: string;
+    } | {
+        id: string;
+        profileId: string;
+        externalAgentId: string | null;
+        userId: string | null;
+        request: PerplexityChatCompletionRequest;
+        processedRequest?: PerplexityChatCompletionRequest | null;
+        response: PerplexityChatCompletionResponse;
+        type: 'perplexity:chatCompletions';
         model: string | null;
         inputTokens: number | null;
         outputTokens: number | null;
@@ -13597,7 +13861,7 @@ export type GetOptimizationRulesResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -13617,7 +13881,7 @@ export type CreateOptimizationRuleData = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         targetModel: string;
         enabled?: boolean;
         createdAt?: unknown;
@@ -13700,7 +13964,7 @@ export type CreateOptimizationRuleResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -13799,7 +14063,7 @@ export type UpdateOptimizationRuleData = {
         } | {
             hasTools: boolean;
         }>;
-        provider?: 'openai' | 'gemini' | 'anthropic';
+        provider?: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         targetModel?: string;
         enabled?: boolean;
         createdAt?: unknown;
@@ -13884,7 +14148,7 @@ export type UpdateOptimizationRuleResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -14240,6 +14504,178 @@ export type GetPublicAppearanceResponses = {
 };
 
 export type GetPublicAppearanceResponse = GetPublicAppearanceResponses[keyof GetPublicAppearanceResponses];
+
+export type PerplexityChatCompletionsWithDefaultAgentData = {
+    body?: PerplexityChatCompletionRequestInput;
+    headers: {
+        /**
+         * The user agent of the client
+         */
+        'user-agent'?: string;
+        /**
+         * Bearer token for Perplexity API
+         */
+        authorization: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/perplexity/chat/completions';
+};
+
+export type PerplexityChatCompletionsWithDefaultAgentErrors = {
+    /**
+     * Default Response
+     */
+    400: {
+        error: {
+            message: string;
+            type: 'api_validation_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    401: {
+        error: {
+            message: string;
+            type: 'api_authentication_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    403: {
+        error: {
+            message: string;
+            type: 'api_authorization_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    404: {
+        error: {
+            message: string;
+            type: 'api_not_found_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    409: {
+        error: {
+            message: string;
+            type: 'api_conflict_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    500: {
+        error: {
+            message: string;
+            type: 'api_internal_server_error';
+        };
+    };
+};
+
+export type PerplexityChatCompletionsWithDefaultAgentError = PerplexityChatCompletionsWithDefaultAgentErrors[keyof PerplexityChatCompletionsWithDefaultAgentErrors];
+
+export type PerplexityChatCompletionsWithDefaultAgentResponses = {
+    /**
+     * Default Response
+     */
+    200: PerplexityChatCompletionResponse;
+};
+
+export type PerplexityChatCompletionsWithDefaultAgentResponse = PerplexityChatCompletionsWithDefaultAgentResponses[keyof PerplexityChatCompletionsWithDefaultAgentResponses];
+
+export type PerplexityChatCompletionsWithAgentData = {
+    body?: PerplexityChatCompletionRequestInput;
+    headers: {
+        /**
+         * The user agent of the client
+         */
+        'user-agent'?: string;
+        /**
+         * Bearer token for Perplexity API
+         */
+        authorization: string;
+    };
+    path: {
+        agentId: string;
+    };
+    query?: never;
+    url: '/v1/perplexity/{agentId}/chat/completions';
+};
+
+export type PerplexityChatCompletionsWithAgentErrors = {
+    /**
+     * Default Response
+     */
+    400: {
+        error: {
+            message: string;
+            type: 'api_validation_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    401: {
+        error: {
+            message: string;
+            type: 'api_authentication_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    403: {
+        error: {
+            message: string;
+            type: 'api_authorization_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    404: {
+        error: {
+            message: string;
+            type: 'api_not_found_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    409: {
+        error: {
+            message: string;
+            type: 'api_conflict_error';
+        };
+    };
+    /**
+     * Default Response
+     */
+    500: {
+        error: {
+            message: string;
+            type: 'api_internal_server_error';
+        };
+    };
+};
+
+export type PerplexityChatCompletionsWithAgentError = PerplexityChatCompletionsWithAgentErrors[keyof PerplexityChatCompletionsWithAgentErrors];
+
+export type PerplexityChatCompletionsWithAgentResponses = {
+    /**
+     * Default Response
+     */
+    200: PerplexityChatCompletionResponse;
+};
+
+export type PerplexityChatCompletionsWithAgentResponse = PerplexityChatCompletionsWithAgentResponses[keyof PerplexityChatCompletionsWithAgentResponses];
 
 export type GetPolicyConfigSubagentPromptData = {
     body?: never;
@@ -17178,7 +17614,7 @@ export type GetTokenPricesResponses = {
      */
     200: Array<{
         id: string;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17191,7 +17627,7 @@ export type GetTokenPricesResponse = GetTokenPricesResponses[keyof GetTokenPrice
 
 export type CreateTokenPriceData = {
     body: {
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17266,7 +17702,7 @@ export type CreateTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17430,7 +17866,7 @@ export type GetTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17443,7 +17879,7 @@ export type GetTokenPriceResponse = GetTokenPriceResponses[keyof GetTokenPriceRe
 
 export type UpdateTokenPriceData = {
     body?: {
-        provider?: 'openai' | 'gemini' | 'anthropic';
+        provider?: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model?: string;
         pricePerMillionInput?: string;
         pricePerMillionOutput?: string;
@@ -17520,7 +17956,7 @@ export type UpdateTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;

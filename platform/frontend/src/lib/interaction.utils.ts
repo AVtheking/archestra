@@ -8,6 +8,7 @@ import type {
 } from "./llmProviders/common";
 import GeminiGenerateContentInteraction from "./llmProviders/gemini";
 import OpenAiChatCompletionInteraction from "./llmProviders/openai";
+import PerplexityChatCompletionInteraction from "./llmProviders/perplexity";
 
 export interface CostSavingsInput {
   cost: string | null | undefined;
@@ -54,8 +55,8 @@ export function calculateCostSavings(
   // Calculate tokens saved from TOON compression
   const toonTokensSaved =
     input.toonTokensBefore &&
-    input.toonTokensAfter &&
-    input.toonTokensBefore > input.toonTokensAfter
+      input.toonTokensAfter &&
+      input.toonTokensBefore > input.toonTokensAfter
       ? input.toonTokensBefore - input.toonTokensAfter
       : null;
 
@@ -112,12 +113,16 @@ export class DynamicInteraction implements InteractionUtils {
   }
 
   private getInteractionClass(interaction: Interaction): InteractionUtils {
-    if (this.type === "openai:chatCompletions") {
-      return new OpenAiChatCompletionInteraction(interaction);
-    } else if (this.type === "anthropic:messages") {
-      return new AnthropicMessagesInteraction(interaction);
+    switch (this.type) {
+      case "openai:chatCompletions":
+        return new OpenAiChatCompletionInteraction(interaction);
+      case "anthropic:messages":
+        return new AnthropicMessagesInteraction(interaction);
+      case "gemini:generateContent":
+        return new GeminiGenerateContentInteraction(interaction);
+      case "perplexity:chatCompletions":
+        return new PerplexityChatCompletionInteraction(interaction);
     }
-    return new GeminiGenerateContentInteraction(interaction);
   }
 
   isLastMessageToolCall(): boolean {

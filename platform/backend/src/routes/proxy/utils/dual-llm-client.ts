@@ -6,6 +6,7 @@ import config from "@/config";
 import logger from "@/logging";
 import type { DualLlmMessage } from "@/types";
 import { createGoogleGenAIClient } from "./gemini-client";
+import Perplexity from "@perplexity-ai/perplexity_ai";
 
 /**
  * Abstract interface for LLM clients used in dual LLM pattern
@@ -113,6 +114,90 @@ export class OpenAiDualLlmClient implements DualLlmClient {
     logger.debug(
       { model: this.model, responseLength: content.length },
       "[dualLlmClient] OpenAI: chat with schema complete, parsing response",
+    );
+    return JSON.parse(content) as T;
+  }
+}
+export class PerplexityDualLlmClient implements DualLlmClient {
+  private client: Perplexity;
+  private model: string;
+
+  constructor(apiKey: string, model = "gpt-4o") {
+    logger.debug({ model }, "[dualLlmClient] Perplexity: initializing client");
+    this.client = new Perplexity({
+      apiKey,
+      baseURL: config.llm.perplexity.baseUrl,
+    });
+    this.model = model;
+  }
+
+  async chat(messages: DualLlmMessage[], temperature = 0): Promise<string> {
+    logger.debug(
+      { model: this.model, messageCount: messages.length, temperature },
+      "[dualLlmClient] Perplexity: starting chat completion",
+    );
+    const response = await this.client.chat.completions.create({
+      model: this.model,
+      messages,
+      temperature,
+    });
+
+    const messageContent = response.choices[0].message.content;
+    const content = (
+      typeof messageContent === "string"
+        ? messageContent
+        : messageContent?.find((block) => block.type === "text")?.text ?? ""
+    ).trim();
+
+    logger.debug(
+      { model: this.model, responseLength: content.length },
+      "[dualLlmClient] Perplexity: chat completion complete",
+    );
+    return content;
+  }
+
+  async chatWithSchema<T>(
+    messages: DualLlmMessage[],
+    schema: {
+      name: string;
+      schema: {
+        type: string;
+        properties: Record<string, unknown>;
+        required: string[];
+        additionalProperties: boolean;
+      };
+    },
+    temperature = 0,
+  ): Promise<T> {
+    logger.debug(
+      {
+        model: this.model,
+        schemaName: schema.name,
+        messageCount: messages.length,
+        temperature,
+      },
+      "[dualLlmClient] Perplexity: starting chat with schema",
+    );
+    const response = await this.client.chat.completions.create({
+      model: this.model,
+      messages,
+      response_format: {
+        type: "json_schema",
+        json_schema: schema,
+      },
+      temperature,
+    });
+
+    const messageContent = response.choices[0].message.content;
+    const content = (
+      typeof messageContent === "string"
+        ? messageContent
+        : messageContent?.find((block) => block.type === "text")?.text ?? ""
+    ).trim();
+
+    logger.debug(
+      { model: this.model, responseLength: content.length },
+      "[dualLlmClient] Perplexity: chat with schema complete, parsing response",
     );
     return JSON.parse(content) as T;
   }
@@ -359,6 +444,11 @@ export function createDualLlmClient(
     case "gemini":
       // Gemini supports Vertex AI mode where apiKey may be undefined
       return new GeminiDualLlmClient(apiKey);
+    case "perplexity":
+      if (!apiKey) {
+        throw new Error("API key required for Perplexity dual LLM");
+      }
+      return new PerplexityDualLlmClient(apiKey);
     default:
       logger.debug(
         { provider },

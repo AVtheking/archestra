@@ -44,6 +44,7 @@ import {
   ApiError,
   Gemini,
   OpenAi,
+  Perplexity,
   WebSocketMessageSchema,
 } from "@/types";
 import websocketService from "@/websocket";
@@ -94,6 +95,12 @@ export function registerOpenApiSchemas() {
   });
   z.globalRegistry.add(WebSocketMessageSchema, {
     id: "WebSocketMessage",
+  });
+  z.globalRegistry.add(Perplexity.API.ChatCompletionRequestSchema, {
+    id: "PerplexityChatCompletionRequest",
+  });
+  z.globalRegistry.add(Perplexity.API.ChatCompletionResponseSchema, {
+    id: "PerplexityChatCompletionResponse",
   });
 }
 

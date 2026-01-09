@@ -143,8 +143,7 @@ export function initializeMetrics(labelKeys: string[]): void {
   });
 
   logger.info(
-    `Metrics initialized with ${
-      nextLabelKeys.length
+    `Metrics initialized with ${nextLabelKeys.length
     } agent label keys: ${nextLabelKeys.join(", ")}`,
   );
 }
@@ -429,21 +428,11 @@ export function getObservableFetch(
         if (!data.usage) {
           return response;
         }
-        if (provider === "openai") {
+        if (provider === "openai" || provider === "anthropic" || provider === "perplexity") {
           const { input, output } = utils.adapters.openai.getUsageTokens(
             data.usage,
           );
-          reportLLMTokens(
-            provider,
-            profile,
-            { input, output },
-            model,
-            externalAgentId,
-          );
-        } else if (provider === "anthropic") {
-          const { input, output } = utils.adapters.anthropic.getUsageTokens(
-            data.usage,
-          );
+
           reportLLMTokens(
             provider,
             profile,
@@ -527,8 +516,8 @@ export function getObservableGenAI(
       const duration = Math.round((Date.now() - startTime) / 1000);
       const statusCode =
         error instanceof Error &&
-        "status" in error &&
-        typeof error.status === "number"
+          "status" in error &&
+          typeof error.status === "number"
           ? error.status.toString()
           : "0";
 
