@@ -42,6 +42,7 @@ Each provider needs Zod schemas defining its API contract. TypeScript types are 
 | `backend/src/types/llm-providers/{provider}/messages.ts` | Message array schemas - defines the structure of conversation history (user/assistant/tool messages) |
 | `backend/src/types/llm-providers/{provider}/tools.ts` | Tool definition schemas - how tools are declared in requests (function calling format) |
 | `backend/src/types/llm-providers/{provider}/index.ts` | Namespace export that groups all types under `{Provider}.Types` |
+| `backend/src/types/interaction.ts`  | Add provider schemas to `InteractionRequestSchema`, `InteractionResponseSchema`, and `SelectInteractionSchema` discriminated union |
 
 ### Adapter Implementation
 
