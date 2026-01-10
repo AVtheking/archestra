@@ -396,11 +396,11 @@ class PerplexityStreamAdapter
           index: 0,
           delta: {
             role: 'assistant',
-            content: null,
+            content: '',
           },
           message: {
             role: 'assistant',
-            content: null,
+            content: '',
           },
           finish_reason: (this.state.stopReason as 'stop' | 'length') ?? 'stop',
         },

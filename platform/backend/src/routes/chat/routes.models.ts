@@ -356,7 +356,25 @@ export async function fetchGeminiModelsViaVertexAi(): Promise<ModelInfo[]> {
 }
 
 
-async function fetchPerplexityModels(_apiKey: string): Promise<ModelInfo[]> {
+async function fetchPerplexityModels(apiKey: string): Promise<ModelInfo[]> {
+
+  // test if the api key is valid by making a request to the chat/completions endpoint
+  const response = await fetch(`${config.llm.perplexity.baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "sonar",
+      messages: [{ role: "user", content: "ping" }],
+      max_tokens: 1,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Perplexity models: ${response.status}`);
+  }
+
   // Perplexity models are hardcoded as they don't have a public models list endpoint
   return [
     { id: "sonar", displayName: "Sonar", provider: "perplexity" as const },
@@ -476,10 +494,12 @@ export async function fetchModelsForProvider({
   // vLLM and Ollama typically don't require API keys
   const isVllm = provider === "vllm";
   const isOllama = provider === "ollama";
+  const isPerplexity = provider === "perplexity";
+  const doesNotRequireApiKey = vertexAiEnabled || isVllm || isOllama || isPerplexity;
 
   // For Gemini with Vertex AI, we don't need an API key - authentication is via ADC
   // For vLLM and Ollama, API key is optional
-  if (!apiKey && !vertexAiEnabled && !isVllm && !isOllama) {
+  if (!apiKey && !doesNotRequireApiKey) {
     logger.debug(
       { provider, organizationId },
       "No API key available for provider",
@@ -511,13 +531,11 @@ export async function fetchModelsForProvider({
         // Use standard Gemini API with API key
         models = await modelFetchers[provider](apiKey);
       }
-    } else if (provider === "vllm") {
-      // vLLM doesn't require API key, pass empty or configured key
-      models = await modelFetchers[provider](apiKey || "EMPTY");
-    } else if (provider === "ollama") {
-      // Ollama doesn't require API key, pass empty or configured key
+    } else if (["vllm", "ollama", "perplexity"].includes(provider)) {
+      // vLLM/Ollama/Perplexity don't require API key, pass empty or configured key
       models = await modelFetchers[provider](apiKey || "EMPTY");
     }
+
     await cacheManager.set(cacheKey, models, CHAT_MODELS_CACHE_TTL_MS);
     return models;
   } catch (error) {
