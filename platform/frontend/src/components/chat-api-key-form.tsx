@@ -90,6 +90,14 @@ const PROVIDER_CONFIG: Record<
     consoleUrl: "https://aistudio.google.com/app/apikey",
     consoleName: "Google AI Studio",
   },
+  perplexity: {
+    name: "Perplexity",
+    icon: "/icons/perplexity.png",
+    placeholder: "pp-...",
+    enabled: true,
+    consoleUrl: "https://www.perplexity.ai/account/api/keys",
+    consoleName: "Perplexity",
+  },
 } as const;
 
 export { PROVIDER_CONFIG };

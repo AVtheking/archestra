@@ -6381,7 +6381,7 @@ export type GetChatApiKeysResponses = {
         id: string;
         organizationId: string;
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         secretId: string | null;
         scope: 'personal' | 'team' | 'org_wide';
         userId: string | null;
@@ -6401,7 +6401,7 @@ export type GetChatApiKeysResponse = GetChatApiKeysResponses[keyof GetChatApiKey
 export type CreateChatApiKeyData = {
     body: {
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         apiKey?: string;
         scope?: 'personal' | 'team' | 'org_wide';
         teamId?: string;
@@ -6480,7 +6480,7 @@ export type CreateChatApiKeyResponses = {
         id: string;
         organizationId: string;
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         secretId: string | null;
         scope: 'personal' | 'team' | 'org_wide';
         userId: string | null;
@@ -6496,7 +6496,7 @@ export type GetAvailableChatApiKeysData = {
     body?: never;
     path?: never;
     query?: {
-        provider?: 'anthropic' | 'openai' | 'gemini';
+        provider?: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
     };
     url: '/api/chat-api-keys/available';
 };
@@ -6568,7 +6568,7 @@ export type GetAvailableChatApiKeysResponses = {
         id: string;
         organizationId: string;
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         secretId: string | null;
         scope: 'personal' | 'team' | 'org_wide';
         userId: string | null;
@@ -6740,7 +6740,7 @@ export type GetChatApiKeyResponses = {
         id: string;
         organizationId: string;
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         secretId: string | null;
         scope: 'personal' | 'team' | 'org_wide';
         userId: string | null;
@@ -6840,7 +6840,7 @@ export type UpdateChatApiKeyResponses = {
         id: string;
         organizationId: string;
         name: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         secretId: string | null;
         scope: 'personal' | 'team' | 'org_wide';
         userId: string | null;
@@ -6856,7 +6856,7 @@ export type GetChatModelsData = {
     body?: never;
     path?: never;
     query?: {
-        provider?: 'anthropic' | 'openai' | 'gemini';
+        provider?: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
     };
     url: '/api/chat/models';
 };
@@ -6927,7 +6927,7 @@ export type GetChatModelsResponses = {
     200: Array<{
         id: string;
         displayName: string;
-        provider: 'anthropic' | 'openai' | 'gemini';
+        provider: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         createdAt?: string;
     }>;
 };
@@ -7107,7 +7107,7 @@ export type CreateChatConversationData = {
         promptId?: string | null;
         title?: string | null;
         selectedModel?: string;
-        selectedProvider?: 'anthropic' | 'openai' | 'gemini';
+        selectedProvider?: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         chatApiKeyId?: string | null;
     };
     path?: never;
@@ -7387,7 +7387,7 @@ export type UpdateChatConversationData = {
     body?: {
         title?: string | null;
         selectedModel?: string;
-        selectedProvider?: 'anthropic' | 'openai' | 'gemini';
+        selectedProvider?: 'anthropic' | 'openai' | 'gemini' | 'perplexity';
         chatApiKeyId?: string | null;
         agentId?: string;
         artifact?: string | null;
@@ -13861,7 +13861,7 @@ export type GetOptimizationRulesResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -13881,7 +13881,7 @@ export type CreateOptimizationRuleData = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         targetModel: string;
         enabled?: boolean;
         createdAt?: unknown;
@@ -13964,7 +13964,7 @@ export type CreateOptimizationRuleResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -14063,7 +14063,7 @@ export type UpdateOptimizationRuleData = {
         } | {
             hasTools: boolean;
         }>;
-        provider?: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider?: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         targetModel?: string;
         enabled?: boolean;
         createdAt?: unknown;
@@ -14148,7 +14148,7 @@ export type UpdateOptimizationRuleResponses = {
         } | {
             hasTools: boolean;
         }>;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         targetModel: string;
         enabled: boolean;
         createdAt: string;
@@ -17614,7 +17614,7 @@ export type GetTokenPricesResponses = {
      */
     200: Array<{
         id: string;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17627,7 +17627,7 @@ export type GetTokenPricesResponse = GetTokenPricesResponses[keyof GetTokenPrice
 
 export type CreateTokenPriceData = {
     body: {
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17702,7 +17702,7 @@ export type CreateTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17866,7 +17866,7 @@ export type GetTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;
@@ -17879,7 +17879,7 @@ export type GetTokenPriceResponse = GetTokenPriceResponses[keyof GetTokenPriceRe
 
 export type UpdateTokenPriceData = {
     body?: {
-        provider?: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider?: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model?: string;
         pricePerMillionInput?: string;
         pricePerMillionOutput?: string;
@@ -17956,7 +17956,7 @@ export type UpdateTokenPriceResponses = {
      */
     200: {
         id: string;
-        provider: 'openai' | 'perplexity' | 'gemini' | 'anthropic';
+        provider: 'openai' | 'gemini' | 'anthropic' | 'perplexity';
         model: string;
         pricePerMillionInput: string;
         pricePerMillionOutput: string;

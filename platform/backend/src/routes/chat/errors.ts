@@ -6,6 +6,7 @@ import {
   GeminiErrorCodes,
   GeminiErrorReasons,
   OpenAIErrorTypes,
+  PerplexityErrorTypes,
   RetryableErrorCodes,
   type SupportedProvider,
 } from "@shared";
@@ -80,6 +81,12 @@ interface ParsedAnthropicError {
   message?: string;
 }
 
+interface ParsedPerplexityError {
+  code: number;
+  message?: string | null;
+  type?: string | null;
+}
+
 /**
  * Parsed ErrorInfo from google.rpc.ErrorInfo in the details array.
  * @see https://cloud.google.com/apis/design/errors#error_info
@@ -125,6 +132,28 @@ function parseOpenAIError(responseBody: string): ParsedOpenAIError | null {
         param: parsed.error.param,
       };
     }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Parse Perplexity error response body.
+ * Perplexity errors have structure: { error: { code, message, type } }
+ *
+ * @see https://docs.perplexity.ai/guides/perplexity-sdk-error-handling
+ */
+function parsePerplexityError(responseBody: string): ParsedPerplexityError | null {
+  try {
+    const parsed = JSON.parse(responseBody);
+    if (parsed?.error)
+      return {
+        code: parsed.error.code,
+        message: parsed.error.message,
+        type: parsed.error.type,
+
+      };
     return null;
   } catch {
     return null;
@@ -325,7 +354,7 @@ function parseGeminiError(responseBody: string): ParsedGeminiError | null {
       // Details can be an array or object-like array from nested JSON parsing
       const details =
         Array.isArray(errorObj.details) ||
-        (typeof errorObj.details === "object" && errorObj.details !== null)
+          (typeof errorObj.details === "object" && errorObj.details !== null)
           ? (errorObj.details as unknown[] | Record<string, unknown>)
           : undefined;
 
@@ -335,24 +364,24 @@ function parseGeminiError(responseBody: string): ParsedGeminiError | null {
             ? errorObj.code
             : typeof parsed?.error === "object"
               ? ((parsed.error as Record<string, unknown>).code as
-                  | number
-                  | undefined)
+                | number
+                | undefined)
               : undefined,
         status:
           typeof errorObj.status === "string"
             ? errorObj.status
             : typeof parsed?.error === "object"
               ? ((parsed.error as Record<string, unknown>).status as
-                  | string
-                  | undefined)
+                | string
+                | undefined)
               : undefined,
         message:
           typeof errorObj.message === "string"
             ? errorObj.message
             : typeof parsed?.error === "object"
               ? ((parsed.error as Record<string, unknown>).message as
-                  | string
-                  | undefined)
+                | string
+                | undefined)
               : undefined,
         details: Array.isArray(details) ? details : undefined,
         // Extract ErrorInfo for specific error reason mapping
@@ -485,6 +514,53 @@ function mapAnthropicErrorToCode(
 
   return mapStatusCodeToErrorCode(statusCode);
 }
+
+/**
+ * Map Perplexity error to ChatErrorCode.
+ * Uses error class name from the SDK as the error type.
+ *
+ * Error classes documented at:
+ * @see https://docs.perplexity.ai/guides/perplexity-sdk-error-handling
+ *
+ * HTTP Status -> Error Class mapping:
+ * - 400 -> BadRequestError (invalid request)
+ * - 401 -> AuthenticationError (invalid API key)
+ * - 403 -> PermissionDeniedError (no access to resource)
+ * - 404 -> NotFoundError (resource doesn't exist)
+ * - 422 -> UnprocessableEntityError (request understood but cannot be processed)
+ * - 429 -> RateLimitError (rate limit exceeded)
+ * - 500+ -> InternalServerError (server error)
+ * - N/A -> APIConnectionError (network issues)
+ */
+function mapPerplexityErrorToCode(
+  statusCode: number | undefined,
+  parsedError: ParsedPerplexityError | null,
+): ChatErrorCode {
+  const errorType = parsedError?.type;
+
+  if (errorType) {
+    switch (errorType) {
+      case PerplexityErrorTypes.AUTHENTICATION:
+        return ChatErrorCode.Authentication;
+      case PerplexityErrorTypes.RATE_LIMIT:
+        return ChatErrorCode.RateLimit;
+      case PerplexityErrorTypes.PERMISSION_DENIED:
+        return ChatErrorCode.PermissionDenied;
+      case PerplexityErrorTypes.NOT_FOUND:
+        return ChatErrorCode.NotFound;
+      case PerplexityErrorTypes.BAD_REQUEST:
+      case PerplexityErrorTypes.UNPROCESSABLE_ENTITY:
+        return ChatErrorCode.InvalidRequest;
+      case PerplexityErrorTypes.INTERNAL_SERVER:
+        return ChatErrorCode.ServerError;
+      case PerplexityErrorTypes.API_CONNECTION:
+        return ChatErrorCode.NetworkError;
+    }
+  }
+
+  return mapStatusCodeToErrorCode(statusCode);
+}
+
 
 /**
  * Map Gemini/Vertex AI error to ChatErrorCode.
@@ -624,7 +700,8 @@ function mapStatusCodeToErrorCode(
 type ParsedProviderError =
   | ParsedOpenAIError
   | ParsedAnthropicError
-  | ParsedGeminiError;
+  | ParsedGeminiError
+  | ParsedPerplexityError;
 
 type ErrorParser = (responseBody: string) => ParsedProviderError | null;
 type ErrorMapper = (
@@ -665,6 +742,14 @@ function mapGeminiErrorWrapper(
   );
 }
 
+function mapPerplexityErrorWrapper(
+  statusCode: number | undefined,
+  parsedError: ParsedProviderError | null,
+): ChatErrorCode {
+  return mapPerplexityErrorToCode(statusCode, parsedError as ParsedPerplexityError | null);
+
+}
+
 /**
  * Registry of provider-specific error parsers.
  * Using Record<SupportedProvider, ...> ensures TypeScript will error
@@ -674,6 +759,7 @@ const providerParsers: Record<SupportedProvider, ErrorParser> = {
   openai: parseOpenAIError,
   anthropic: parseAnthropicError,
   gemini: parseGeminiError,
+  perplexity: parsePerplexityError,
 };
 
 /**
@@ -685,6 +771,7 @@ const providerMappers: Record<SupportedProvider, ErrorMapper> = {
   openai: mapOpenAIErrorWrapper,
   anthropic: mapAnthropicErrorWrapper,
   gemini: mapGeminiErrorWrapper,
+  perplexity: mapPerplexityErrorWrapper,
 };
 
 // =============================================================================

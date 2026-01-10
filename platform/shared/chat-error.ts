@@ -94,6 +94,21 @@ export const GeminiErrorReasons = {
   CONTEXT_LENGTH_EXCEEDED: "CONTEXT_LENGTH_EXCEEDED",
 } as const;
 
+/**
+ * Perplexity API error types (HTTP status codes and error classes)
+ * @see https://docs.perplexity.ai/guides/perplexity-sdk-error-handling
+ */
+export const PerplexityErrorTypes = {
+  BAD_REQUEST: "bad_request",              // 400
+  AUTHENTICATION: "authentication",        // 401
+  PERMISSION_DENIED: "permission_denied",  // 403
+  NOT_FOUND: "not_found",                  // 404
+  UNPROCESSABLE_ENTITY: "unprocessable_entity", // 422
+  RATE_LIMIT: "rate_limit",                // 429
+  INTERNAL_SERVER: "internal_server",      // 500+
+  API_CONNECTION: "api_connection",        // Network issues
+} as const;
+
 // =============================================================================
 // Normalized Chat Error Codes
 // =============================================================================
