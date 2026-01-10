@@ -20460,7 +20460,8 @@
                         "enum": [
                           "anthropic",
                           "openai",
-                          "gemini"
+                          "gemini",
+                          "perplexity"
                         ]
                       },
                       "secretId": {
@@ -20770,7 +20771,8 @@
                     "enum": [
                       "anthropic",
                       "openai",
-                      "gemini"
+                      "gemini",
+                      "perplexity"
                     ]
                   },
                   "apiKey": {
@@ -20831,7 +20833,8 @@
                       "enum": [
                         "anthropic",
                         "openai",
-                        "gemini"
+                        "gemini",
+                        "perplexity"
                       ]
                     },
                     "secretId": {
@@ -21109,7 +21112,8 @@
               "enum": [
                 "anthropic",
                 "openai",
-                "gemini"
+                "gemini",
+                "perplexity"
               ]
             },
             "in": "query",
@@ -21143,7 +21147,8 @@
                         "enum": [
                           "anthropic",
                           "openai",
-                          "gemini"
+                          "gemini",
+                          "perplexity"
                         ]
                       },
                       "secretId": {
@@ -21476,7 +21481,8 @@
                       "enum": [
                         "anthropic",
                         "openai",
-                        "gemini"
+                        "gemini",
+                        "perplexity"
                       ]
                     },
                     "secretId": {
@@ -21847,7 +21853,8 @@
                       "enum": [
                         "anthropic",
                         "openai",
-                        "gemini"
+                        "gemini",
+                        "perplexity"
                       ]
                     },
                     "secretId": {
@@ -22375,7 +22382,8 @@
               "enum": [
                 "anthropic",
                 "openai",
-                "gemini"
+                "gemini",
+                "perplexity"
               ]
             },
             "in": "query",
@@ -22404,7 +22412,8 @@
                         "enum": [
                           "anthropic",
                           "openai",
-                          "gemini"
+                          "gemini",
+                          "perplexity"
                         ]
                       },
                       "createdAt": {
@@ -23285,7 +23294,8 @@
                     "enum": [
                       "anthropic",
                       "openai",
-                      "gemini"
+                      "gemini",
+                      "perplexity"
                     ]
                   },
                   "chatApiKeyId": {
@@ -24050,7 +24060,8 @@
                     "enum": [
                       "anthropic",
                       "openai",
-                      "gemini"
+                      "gemini",
+                      "perplexity"
                     ]
                   },
                   "chatApiKeyId": {
@@ -47231,9 +47242,9 @@
                         "type": "string",
                         "enum": [
                           "openai",
-                          "perplexity",
                           "gemini",
-                          "anthropic"
+                          "anthropic",
+                          "perplexity"
                         ]
                       },
                       "targetModel": {
@@ -47543,9 +47554,9 @@
                     "type": "string",
                     "enum": [
                       "openai",
-                      "perplexity",
                       "gemini",
-                      "anthropic"
+                      "anthropic",
+                      "perplexity"
                     ]
                   },
                   "targetModel": {
@@ -47630,9 +47641,9 @@
                       "type": "string",
                       "enum": [
                         "openai",
-                        "perplexity",
                         "gemini",
-                        "anthropic"
+                        "anthropic",
+                        "perplexity"
                       ]
                     },
                     "targetModel": {
@@ -47943,9 +47954,9 @@
                     "type": "string",
                     "enum": [
                       "openai",
-                      "perplexity",
                       "gemini",
-                      "anthropic"
+                      "anthropic",
+                      "perplexity"
                     ]
                   },
                   "targetModel": {
@@ -48034,9 +48045,9 @@
                       "type": "string",
                       "enum": [
                         "openai",
-                        "perplexity",
                         "gemini",
-                        "anthropic"
+                        "anthropic",
+                        "perplexity"
                       ]
                     },
                     "targetModel": {
@@ -60189,9 +60200,9 @@
                         "type": "string",
                         "enum": [
                           "openai",
-                          "perplexity",
                           "gemini",
-                          "anthropic"
+                          "anthropic",
+                          "perplexity"
                         ]
                       },
                       "model": {
@@ -60456,9 +60467,9 @@
                     "type": "string",
                     "enum": [
                       "openai",
-                      "perplexity",
                       "gemini",
-                      "anthropic"
+                      "anthropic",
+                      "perplexity"
                     ]
                   },
                   "model": {
@@ -60500,9 +60511,9 @@
                       "type": "string",
                       "enum": [
                         "openai",
-                        "perplexity",
                         "gemini",
-                        "anthropic"
+                        "anthropic",
+                        "perplexity"
                       ]
                     },
                     "model": {
@@ -60787,9 +60798,9 @@
                       "type": "string",
                       "enum": [
                         "openai",
-                        "perplexity",
                         "gemini",
-                        "anthropic"
+                        "anthropic",
+                        "perplexity"
                       ]
                     },
                     "model": {
@@ -61053,9 +61064,9 @@
                     "type": "string",
                     "enum": [
                       "openai",
-                      "perplexity",
                       "gemini",
-                      "anthropic"
+                      "anthropic",
+                      "perplexity"
                     ]
                   },
                   "model": {
@@ -61102,9 +61113,9 @@
                       "type": "string",
                       "enum": [
                         "openai",
-                        "perplexity",
                         "gemini",
-                        "anthropic"
+                        "anthropic",
+                        "perplexity"
                       ]
                     },
                     "model": {
