@@ -6833,7 +6833,6 @@
           "messages": {
             "type": "array",
             "items": {
-              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#body-messages",
               "type": "object",
               "properties": {
                 "content": {
@@ -6851,7 +6850,8 @@
               "required": [
                 "content",
                 "role"
-              ]
+              ],
+              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#body-messages"
             }
           },
           "max_tokens": {
@@ -7137,7 +7137,6 @@
           "choices": {
             "type": "array",
             "items": {
-              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices",
               "type": "object",
               "properties": {
                 "finish_reason": {
@@ -7158,7 +7157,6 @@
                   "type": "number"
                 },
                 "message": {
-                  "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message",
                   "type": "object",
                   "properties": {
                     "content": {
@@ -7174,14 +7172,16 @@
                   "required": [
                     "content",
                     "role"
-                  ]
+                  ],
+                  "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message"
                 }
               },
               "required": [
                 "finish_reason",
                 "index",
                 "message"
-              ]
+              ],
+              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices"
             }
           },
           "search_results": {
@@ -7303,7 +7303,6 @@
             ]
           },
           "usage": {
-            "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage",
             "type": "object",
             "properties": {
               "completion_tokens": {
@@ -7364,7 +7363,8 @@
               "citation_tokens",
               "reasoning_tokens",
               "num_search_queries"
-            ]
+            ],
+            "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage"
           }
         },
         "required": [
@@ -14493,7 +14493,6 @@
           "messages": {
             "type": "array",
             "items": {
-              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#body-messages",
               "type": "object",
               "properties": {
                 "content": {
@@ -14512,7 +14511,8 @@
                 "content",
                 "role"
               ],
-              "additionalProperties": false
+              "additionalProperties": false,
+              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#body-messages"
             }
           },
           "max_tokens": {
@@ -14808,7 +14808,6 @@
           "choices": {
             "type": "array",
             "items": {
-              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices",
               "type": "object",
               "properties": {
                 "finish_reason": {
@@ -14829,7 +14828,6 @@
                   "type": "number"
                 },
                 "message": {
-                  "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message",
                   "type": "object",
                   "properties": {
                     "content": {
@@ -14846,7 +14844,8 @@
                     "content",
                     "role"
                   ],
-                  "additionalProperties": false
+                  "additionalProperties": false,
+                  "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices-items-message"
                 }
               },
               "required": [
@@ -14854,7 +14853,8 @@
                 "index",
                 "message"
               ],
-              "additionalProperties": false
+              "additionalProperties": false,
+              "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-choices"
             }
           },
           "search_results": {
@@ -14978,7 +14978,6 @@
             ]
           },
           "usage": {
-            "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage",
             "type": "object",
             "properties": {
               "completion_tokens": {
@@ -15040,7 +15039,8 @@
               "reasoning_tokens",
               "num_search_queries"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "https://docs.perplexity.ai/api-reference/chat-completions-post#response-usage"
           }
         },
         "required": [
@@ -37424,6 +37424,112 @@
                           "type": "string",
                           "enum": [
                             "ollama:chatCompletions"
+                          ]
+                        },
+                        "model": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "inputTokens": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -2147483648,
+                          "maximum": 2147483647
+                        },
+                        "outputTokens": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -2147483648,
+                          "maximum": 2147483647
+                        },
+                        "baselineCost": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "cost": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "toonTokensBefore": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -2147483648,
+                          "maximum": 2147483647
+                        },
+                        "toonTokensAfter": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -2147483648,
+                          "maximum": 2147483647
+                        },
+                        "toonCostSavings": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "profileId",
+                        "externalAgentId",
+                        "userId",
+                        "request",
+                        "response",
+                        "type",
+                        "model",
+                        "inputTokens",
+                        "outputTokens",
+                        "baselineCost",
+                        "cost",
+                        "toonTokensBefore",
+                        "toonTokensAfter",
+                        "toonCostSavings",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "profileId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "externalAgentId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "userId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "request": {
+                          "$ref": "#/components/schemas/PerplexityChatCompletionRequest"
+                        },
+                        "processedRequest": {
+                          "nullable": true,
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PerplexityChatCompletionRequest"
+                            }
+                          ]
+                        },
+                        "response": {
+                          "$ref": "#/components/schemas/PerplexityChatCompletionResponse"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "perplexity:chatCompletions"
                           ]
                         },
                         "model": {
