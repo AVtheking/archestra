@@ -7,6 +7,8 @@ import {
   DEFAULT_ADMIN_PASSWORD,
   DEFAULT_ADMIN_PASSWORD_ENV_VAR_NAME,
   DEFAULT_VAULT_TOKEN,
+  type SupportedProvider,
+  SupportedProviders,
 } from "@shared";
 import dotenv from "dotenv";
 import logger from "@/logging";
@@ -261,6 +263,16 @@ export default {
           process.env.ARCHESTRA_GEMINI_VERTEX_AI_CREDENTIALS_FILE || "",
       },
     },
+    vllm: {
+      enabled: Boolean(process.env.ARCHESTRA_VLLM_BASE_URL),
+      baseUrl: process.env.ARCHESTRA_VLLM_BASE_URL,
+      useV2Routes: process.env.ARCHESTRA_VLLM_USE_V2_ROUTES !== "false",
+    },
+    ollama: {
+      enabled: Boolean(process.env.ARCHESTRA_OLLAMA_BASE_URL),
+      baseUrl: process.env.ARCHESTRA_OLLAMA_BASE_URL,
+      useV2Routes: process.env.ARCHESTRA_OLLAMA_USE_V2_ROUTES !== "false",
+    },
     perplexity: {
       baseUrl:
         process.env.ARCHESTRA_PERPLEXITY_BASE_URL ||
@@ -277,6 +289,12 @@ export default {
     gemini: {
       apiKey: process.env.ARCHESTRA_CHAT_GEMINI_API_KEY || "",
     },
+    vllm: {
+      apiKey: process.env.ARCHESTRA_CHAT_VLLM_API_KEY || "",
+    },
+    ollama: {
+      apiKey: process.env.ARCHESTRA_CHAT_OLLAMA_API_KEY || "",
+    },
     perplexity: {
       apiKey: process.env.ARCHESTRA_CHAT_PERPLEXITY_API_KEY || "",
       baseUrl:
@@ -291,14 +309,13 @@ export default {
     },
     defaultModel:
       process.env.ARCHESTRA_CHAT_DEFAULT_MODEL || "claude-opus-4-1-20250805",
-    defaultProvider: ((): "anthropic" | "openai" | "gemini" => {
+    defaultProvider: ((): SupportedProvider => {
       const provider = process.env.ARCHESTRA_CHAT_DEFAULT_PROVIDER;
-      const validProviders = ["anthropic", "openai", "gemini"] as const;
       if (
         provider &&
-        validProviders.includes(provider as (typeof validProviders)[number])
+        SupportedProviders.includes(provider as SupportedProvider)
       ) {
-        return provider as "anthropic" | "openai" | "gemini";
+        return provider as SupportedProvider;
       }
       return "anthropic";
     })(),

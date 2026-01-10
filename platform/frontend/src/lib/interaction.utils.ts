@@ -7,7 +7,9 @@ import type {
   InteractionUtils,
 } from "./llmProviders/common";
 import GeminiGenerateContentInteraction from "./llmProviders/gemini";
+import OllamaChatCompletionInteraction from "./llmProviders/ollama";
 import OpenAiChatCompletionInteraction from "./llmProviders/openai";
+import VllmChatCompletionInteraction from "./llmProviders/vllm";
 import PerplexityChatCompletionInteraction from "./llmProviders/perplexity";
 
 export interface CostSavingsInput {
@@ -113,16 +115,24 @@ export class DynamicInteraction implements InteractionUtils {
   }
 
   private getInteractionClass(interaction: Interaction): InteractionUtils {
-    switch (this.type) {
-      case "openai:chatCompletions":
-        return new OpenAiChatCompletionInteraction(interaction);
-      case "anthropic:messages":
-        return new AnthropicMessagesInteraction(interaction);
-      case "gemini:generateContent":
-        return new GeminiGenerateContentInteraction(interaction);
-      case "perplexity:chatCompletions":
-        return new PerplexityChatCompletionInteraction(interaction);
+    // Note: Type discriminator stored in database determines the interaction type
+    const type = this.type as string;
+    if (type === "openai:chatCompletions") {
+      return new OpenAiChatCompletionInteraction(interaction);
     }
+    if (type === "anthropic:messages") {
+      return new AnthropicMessagesInteraction(interaction);
+    }
+    if (type === "vllm:chatCompletions") {
+      return new VllmChatCompletionInteraction(interaction);
+    }
+    if (type === "ollama:chatCompletions") {
+      return new OllamaChatCompletionInteraction(interaction);
+    }
+    if (type === "perplexity:chatCompletions") {
+      return new PerplexityChatCompletionInteraction(interaction);
+    }
+    return new GeminiGenerateContentInteraction(interaction);
   }
 
   isLastMessageToolCall(): boolean {

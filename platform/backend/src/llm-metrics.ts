@@ -428,11 +428,27 @@ export function getObservableFetch(
         if (!data.usage) {
           return response;
         }
-        if (provider === "openai" || provider === "anthropic" || provider === "perplexity") {
+        if (
+          provider === "openai" ||
+          provider === "vllm" ||
+          provider === "ollama" ||
+          provider === "perplexity"
+        ) {
+          // vLLM and Ollama and Perplexity use OpenAI-compatible API format
           const { input, output } = utils.adapters.openai.getUsageTokens(
             data.usage,
           );
-
+          reportLLMTokens(
+            provider,
+            profile,
+            { input, output },
+            model,
+            externalAgentId,
+          );
+        } else if (provider === "anthropic") {
+          const { input, output } = utils.adapters.anthropic.getUsageTokens(
+            data.usage,
+          );
           reportLLMTokens(
             provider,
             profile,

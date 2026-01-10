@@ -43,7 +43,9 @@ import {
   Anthropic,
   ApiError,
   Gemini,
+  Ollama,
   OpenAi,
+  Vllm,
   Perplexity,
   WebSocketMessageSchema,
 } from "@/types";
@@ -92,6 +94,18 @@ export function registerOpenApiSchemas() {
   });
   z.globalRegistry.add(Anthropic.API.MessagesResponseSchema, {
     id: "AnthropicMessagesResponse",
+  });
+  z.globalRegistry.add(Vllm.API.ChatCompletionRequestSchema, {
+    id: "VllmChatCompletionRequest",
+  });
+  z.globalRegistry.add(Vllm.API.ChatCompletionResponseSchema, {
+    id: "VllmChatCompletionResponse",
+  });
+  z.globalRegistry.add(Ollama.API.ChatCompletionRequestSchema, {
+    id: "OllamaChatCompletionRequest",
+  });
+  z.globalRegistry.add(Ollama.API.ChatCompletionResponseSchema, {
+    id: "OllamaChatCompletionResponse",
   });
   z.globalRegistry.add(WebSocketMessageSchema, {
     id: "WebSocketMessage",
