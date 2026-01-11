@@ -4,7 +4,6 @@
  *
  * the openai ts sdk doesn't expose zod schemas for all of this..
  */
-import type OpenAIProvider from 'openai';
 import type PerplexityProvider from '@perplexity-ai/perplexity_ai';
 import type { z } from 'zod';
 import * as PerplexityAPI from './api';
