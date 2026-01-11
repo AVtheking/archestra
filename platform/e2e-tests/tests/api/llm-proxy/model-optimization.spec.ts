@@ -238,6 +238,31 @@ const ollamaConfig: ModelOptimizationTestConfig = {
   getModelFromResponse: (response) => response.model,
 };
 
+const perplexityConfig: ModelOptimizationTestConfig = {
+  providerName: "Perplexity",
+  provider: "perplexity",
+
+  endpoint: (agentId) => `/v1/perplexity/${agentId}/chat/completions`,
+
+  headers: (wiremockStub) => ({
+    Authorization: `Bearer ${wiremockStub}`,
+    "Content-Type": "application/json",
+  }),
+
+  // Perplexity does NOT support tool calling, so tools parameter is ignored
+  buildRequest: (content, _tools) => {
+    return {
+      model: "e2e-test-perplexity-baseline",
+      messages: [{ role: "user", content }],
+    };
+  },
+
+  baselineModel: "e2e-test-perplexity-baseline",
+  optimizedModel: "e2e-test-perplexity-optimized",
+
+  getModelFromResponse: (response) => response.model,
+};
+
 // =============================================================================
 // Helper Functions
 // =============================================================================
@@ -262,7 +287,8 @@ function generateLongMessage(): string {
 // Test Suite
 // =============================================================================
 
-const testConfigs: ModelOptimizationTestConfig[] = [
+// Providers that support tool calling
+const testConfigsWithTools: ModelOptimizationTestConfig[] = [
   openaiConfig,
   anthropicConfig,
   geminiConfig,
@@ -270,8 +296,22 @@ const testConfigs: ModelOptimizationTestConfig[] = [
   ollamaConfig,
 ];
 
+// Providers that do NOT support tool calling (only length-based tests)
+const testConfigsWithoutTools: ModelOptimizationTestConfig[] = [
+  perplexityConfig,
+];
+
+const allTestConfigs: ModelOptimizationTestConfig[] = [
+  ...testConfigsWithTools,
+  ...testConfigsWithoutTools,
+];
+
 test.describe("LLMProxy-ModelOptimization", () => {
-  for (const config of testConfigs) {
+  // Helper to check if provider supports tools
+  const supportsTools = (config: ModelOptimizationTestConfig) =>
+    testConfigsWithTools.includes(config);
+
+  for (const config of allTestConfigs) {
     // Each provider's tests run serially within the provider
     test.describe(config.providerName, () => {
       test.describe.configure({ mode: "serial" });
@@ -380,93 +420,96 @@ test.describe("LLMProxy-ModelOptimization", () => {
         expect(response.ok()).toBeTruthy();
       });
 
-      test("swaps model when tools are present", async ({
-        request,
-        createAgent,
-        createOptimizationRule,
-        getActiveOrganizationId,
-        makeApiRequest,
-      }) => {
-        const wiremockStub = `${config.providerName.toLowerCase()}-model-optimization-with-tools`;
-
-        // 1. Create a test agent
-        const createResponse = await createAgent(
+      // Tool-based tests only run for providers that support tool calling
+      if (supportsTools(config)) {
+        test("swaps model when tools are present", async ({
           request,
-          `${config.providerName} Model Optimization WithTools Test`,
-        );
-        const agent = await createResponse.json();
-        agentId = agent.id;
+          createAgent,
+          createOptimizationRule,
+          getActiveOrganizationId,
+          makeApiRequest,
+        }) => {
+          const wiremockStub = `${config.providerName.toLowerCase()}-model-optimization-with-tools`;
 
-        // 2. Create optimization rule: swap model when request HAS tools
-        const organizationId = await getActiveOrganizationId(request);
-        const ruleResponse = await createOptimizationRule(request, {
-          entityType: "organization",
-          entityId: organizationId,
-          provider: config.provider,
-          conditions: [{ hasTools: true }],
-          targetModel: config.optimizedModel,
-          enabled: true,
-        });
-        const rule = await ruleResponse.json();
-        optimizationRuleId = rule.id;
+          // 1. Create a test agent
+          const createResponse = await createAgent(
+            request,
+            `${config.providerName} Model Optimization WithTools Test`,
+          );
+          const agent = await createResponse.json();
+          agentId = agent.id;
 
-        // 3. Send a request WITH tools (should trigger optimization)
-        // WireMock stub expects the optimized model in request body - returns 404 if wrong model
-        const response = await makeApiRequest({
-          request,
-          method: "post",
-          urlSuffix: config.endpoint(agentId),
-          headers: config.headers(wiremockStub),
-          data: config.buildRequest(generateShortMessage(), [READ_FILE_TOOL]),
-        });
+          // 2. Create optimization rule: swap model when request HAS tools
+          const organizationId = await getActiveOrganizationId(request);
+          const ruleResponse = await createOptimizationRule(request, {
+            entityType: "organization",
+            entityId: organizationId,
+            provider: config.provider,
+            conditions: [{ hasTools: true }],
+            targetModel: config.optimizedModel,
+            enabled: true,
+          });
+          const rule = await ruleResponse.json();
+          optimizationRuleId = rule.id;
 
-        // WireMock body matcher verifies the model was swapped to optimized
-        expect(response.ok()).toBeTruthy();
-      });
+          // 3. Send a request WITH tools (should trigger optimization)
+          // WireMock stub expects the optimized model in request body - returns 404 if wrong model
+          const response = await makeApiRequest({
+            request,
+            method: "post",
+            urlSuffix: config.endpoint(agentId),
+            headers: config.headers(wiremockStub),
+            data: config.buildRequest(generateShortMessage(), [READ_FILE_TOOL]),
+          });
 
-      test("does NOT swap model when tools are absent", async ({
-        request,
-        createAgent,
-        createOptimizationRule,
-        getActiveOrganizationId,
-        makeApiRequest,
-      }) => {
-        const wiremockStub = `${config.providerName.toLowerCase()}-model-optimization-no-tools`;
-
-        // 1. Create a test agent
-        const createResponse = await createAgent(
-          request,
-          `${config.providerName} Model Optimization NoTools Test`,
-        );
-        const agent = await createResponse.json();
-        agentId = agent.id;
-
-        // 2. Create optimization rule: swap model when request HAS tools
-        const organizationId = await getActiveOrganizationId(request);
-        const ruleResponse = await createOptimizationRule(request, {
-          entityType: "organization",
-          entityId: organizationId,
-          provider: config.provider,
-          conditions: [{ hasTools: true }],
-          targetModel: config.optimizedModel,
-          enabled: true,
-        });
-        const rule = await ruleResponse.json();
-        optimizationRuleId = rule.id;
-
-        // 3. Send a request WITHOUT tools (should NOT trigger optimization)
-        // WireMock stub expects the baseline model in request body - returns 404 if wrong model
-        const response = await makeApiRequest({
-          request,
-          method: "post",
-          urlSuffix: config.endpoint(agentId),
-          headers: config.headers(wiremockStub),
-          data: config.buildRequest(generateShortMessage()),
+          // WireMock body matcher verifies the model was swapped to optimized
+          expect(response.ok()).toBeTruthy();
         });
 
-        // WireMock body matcher verifies the model was NOT swapped (stays baseline)
-        expect(response.ok()).toBeTruthy();
-      });
+        test("does NOT swap model when tools are absent", async ({
+          request,
+          createAgent,
+          createOptimizationRule,
+          getActiveOrganizationId,
+          makeApiRequest,
+        }) => {
+          const wiremockStub = `${config.providerName.toLowerCase()}-model-optimization-no-tools`;
+
+          // 1. Create a test agent
+          const createResponse = await createAgent(
+            request,
+            `${config.providerName} Model Optimization NoTools Test`,
+          );
+          const agent = await createResponse.json();
+          agentId = agent.id;
+
+          // 2. Create optimization rule: swap model when request HAS tools
+          const organizationId = await getActiveOrganizationId(request);
+          const ruleResponse = await createOptimizationRule(request, {
+            entityType: "organization",
+            entityId: organizationId,
+            provider: config.provider,
+            conditions: [{ hasTools: true }],
+            targetModel: config.optimizedModel,
+            enabled: true,
+          });
+          const rule = await ruleResponse.json();
+          optimizationRuleId = rule.id;
+
+          // 3. Send a request WITHOUT tools (should NOT trigger optimization)
+          // WireMock stub expects the baseline model in request body - returns 404 if wrong model
+          const response = await makeApiRequest({
+            request,
+            method: "post",
+            urlSuffix: config.endpoint(agentId),
+            headers: config.headers(wiremockStub),
+            data: config.buildRequest(generateShortMessage()),
+          });
+
+          // WireMock body matcher verifies the model was NOT swapped (stays baseline)
+          expect(response.ok()).toBeTruthy();
+        });
+      }
     });
   }
 });
