@@ -276,7 +276,7 @@ export default {
     perplexity: {
       baseUrl:
         process.env.ARCHESTRA_PERPLEXITY_BASE_URL ||
-        "https://api.perplexity.ai/",
+        "https://api.perplexity.ai",
     },
   },
   chat: {

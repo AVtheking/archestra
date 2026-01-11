@@ -363,6 +363,7 @@ async function fetchPerplexityModels(apiKey: string): Promise<ModelInfo[]> {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model: "sonar",
